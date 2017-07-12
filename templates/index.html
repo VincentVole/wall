@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login and Registration</title>
+</head>
+<body>
+{% if session['user']%}
+	<h1>User {{ session['user'] }} is logged in.</h1>
+{% endif %}
+<h1>Login</h1>
+<form action="/process" method="post">
+	<input type="hidden" name="form_type" value="login">
+	<label for="email">Email</label>
+	<input type="text" name="email" id="email">
+		{% with emails = get_flashed_messages(category_filter=["login_email"]) %}
+		{% if emails %}
+		<ul>
+		    {% for msg in emails %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<label for="password">Password</label>
+	<input type="password" name="password" id="password">
+		{% with password = get_flashed_messages(category_filter=["login_pass"]) %}
+		{% if password %}
+		<ul>
+		    {% for msg in password %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<button>Login</button>
+</form>
+<form action="/process" method="post">
+	<input type="hidden" name="form_type" value="logout">
+	<button>Logout</button>
+</form>
+<h1>Register</h1>
+<form action="/process" method="post">
+	<input type="hidden" name="form_type" value="register">
+	<label for="first_name">First Name</label>
+	<input type="text" name="first_name" id="first_name">
+		{% with first_names = get_flashed_messages(category_filter=["first_name"]) %}
+		{% if first_names %}
+		<ul>
+		    {% for msg in first_names %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<label for="last_name">Last Name</label>
+	<input type="text" name="last_name" id="last_name">
+		{% with last_names = get_flashed_messages(category_filter=["last_name"]) %}
+		{% if last_names %}
+		<ul>
+		    {% for msg in last_names %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<label for="email">Email</label>
+	<input type="text" name="email" id="email">
+		{% with emails = get_flashed_messages(category_filter=["email"]) %}
+		{% if emails %}
+		<ul>
+		    {% for msg in emails %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<label for="password">Password</label>
+	<input type="password" name="password" id="password">
+		{% with passwords = get_flashed_messages(category_filter=["password"]) %}
+		{% if passwords %}
+		<ul>
+		    {% for msg in passwords %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<label for="confirm_password">Confirm Password</label>
+	<input type="password" name="confirm_password" id="confirm_password">
+		{% with confirm_passwords = get_flashed_messages(category_filter=["confirm_password"]) %}
+		{% if confirm_passwords %}
+		<ul>
+		    {% for msg in confirm_passwords %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+	<button>Register</button>
+		{% with register = get_flashed_messages(category_filter=["register"]) %}
+		{% if register %}
+		<ul>
+		    {% for msg in register %}
+		    <li>{{ msg }}</li>
+		    {% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+</form>
+</body>
+</html>
