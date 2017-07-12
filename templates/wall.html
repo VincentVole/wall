@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The Wall</title>
+</head>
+<body>
+	<form action="/process" method="post">
+		<input type="hidden" name="form_type" value="logout">
+		<button>Logout</button>
+	</form>
+	<h2>Post a message</h2>
+	<form action="/process" method="post">
+		<input type="hidden" name="form_type" value="add_message">
+		<!-- <label for="comment">Post a message</label> -->
+		<textarea name="message" id="message" cols="60" rows="3"></textarea>
+		<button>Post a message</button>
+	</form>
+	{% for message in messages %}
+	{% if message %}
+		<h3>{{ message['user_name'] }} - {{ message['created_at'] }}</h3>
+		<p style="padding-left: 1em">{{ message['message'] }}</p>
+		<div style="padding-left: 2em">
+			{% for comment in comments %}
+			{% if comment and comment['message_id'] == message['id'] %}
+				<h3>{{ comment['user_name'] }} - {{ comment['created_at'] }}</h3>
+				<p style="padding-left: 1em">{{ comment['comment'] }}</p>	
+			{% endif %}
+			{% endfor %}
+			<h3>Post a comment</h3>
+			<form action="/process" method="post">
+				<input type="hidden" name="form_type" value="add_comment">
+				<input type="hidden" name="message_id" value="{{ message['id'] }}">
+				<textarea name="comment" id="comment" cols="60" rows="3"></textarea>
+				<button>Post a comment</button>
+			</form>
+		</div>
+	{% endif %}
+	{% endfor %}
+	
+</body>
+</html>

@@ -5,7 +5,7 @@ import md5
 import os, binascii
 app = Flask(__name__)
 app.secret_key = 'sdf1j3kjf02i9efhwj'
-mysql = MySQLConnector(app,'lardb')
+mysql = MySQLConnector(app,'walldb')
 @app.route('/')
 def index():
 	return render_template('index.html')
@@ -102,6 +102,7 @@ def process():
 				hashed_password = md5.md5(request.form['password'] + user['salt']).hexdigest()
 				if hashed_password == user['password']:
 					session['user'] = user['id']
+					return redirect('/wall')
 				else:
 					flash('Email and password do not match!', 'login_pass')
 				email_in_db = True
@@ -111,6 +112,31 @@ def process():
 	elif request.form['form_type'] == 'logout':
 		session.clear()
 		return redirect('/')
+	elif request.form['form_type'] == 'add_message':
+		query = "INSERT INTO messages(user_id, message, created_at, updated_at) VALUES(:user_id, :message, NOW(), NOW())"
+		data = {
+			'user_id': session['user'],
+			'message': request.form['message']
+		}
+		mysql.query_db(query, data)
+		return redirect('/wall')
+	elif request.form['form_type'] == 'add_comment':
+		query = "INSERT INTO comments(user_id, message_id, comment, created_at, updated_at) VALUES(:user_id, :message_id, :comment, NOW(), NOW())"
+		data = {
+			'user_id': session['user'],
+			'message_id': request.form['message_id'],
+			'comment': request.form['comment']
+		}
+		mysql.query_db(query, data)
+		return redirect('/wall')
 
+@app.route('/wall')
+def wall():
+	if 'user' in session:
+		messages = mysql.query_db("SELECT messages.id AS id, messages.message AS message, DATE_FORMAT(messages.created_at, '%M %D %Y') AS created_at, CONCAT(users.first_name, ' ',users.last_name) AS user_name FROM messages LEFT JOIN users ON messages.user_id = users.id")
+		comments = mysql.query_db("SELECT comments.message_id as message_id, comments.comment as comment, DATE_FORMAT(comments.created_at, '%M %D %Y') AS created_at, CONCAT(users.first_name, ' ',users.last_name) AS user_name FROM comments LEFT JOIN users ON comments.user_id = users.id")
+		return render_template('wall.html', messages=messages, comments=comments)
+	else:
+		return redirect('/')
 
 app.run(debug=True)
